@@ -435,6 +435,108 @@ class WSManCLI(WSManProvider):
             # Parse the output into a response object
             return self.parse(output)
     
+    def subscribe(self, cim_class, cim_namespace, EventSinkIP, remote=None, raw=False):
+        """
+        Enumerate the CIM class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        
+        @return: Response object after enumeration
+        @rtype: List of L{Response} objects/ L{Fault}
+        """
+        
+        # Construct the command
+        enumerate_command='wsman subscribe \'http://schemas.dmtf.org/wbem/wscim/1/*\' -x \"SELECT * FROM %s\"' % (cim_class)
+        enumerate_command +=' -D \'http://schemas.dmtf.org/wbem/cql/1/dsp0202.pdf\' -Z \'http://%s:80/eventsink\'  -R -o -m 256 ' %(EventSinkIP)
+
+        enumerate_command += self.remote_options(remote)
+        enumerate_command += '-N %s -r 100' % (cim_namespace)
+
+     	log.info("Performing subscribtion for " + enumerate_command)
+
+        
+        # Use the transport and execute the command
+        output = self.get_transport().execute(enumerate_command)
+        
+        if raw:
+            return output
+        else:
+            # Parse the output into a response object
+            return self.parse(output)
+
+    def renew(self,cim_namespace, uuid, remote=None, raw=False):
+        """
+        
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        @param uuid: The UUID which gets generated after subscription command
+        @type uuid: String
+
+        @return: Response object after enumeration
+        @rtype: List of L{Response} objects/ L{Fault}
+        """
+        
+        # Construct the command
+        enumerate_command='wsman renew http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_IndicationHandlerCIMXML?'
+        enumerate_command += 'SystemCreationClassName="CIM_ComputerSystem",SystemName="localhost.localdomain",CreationClassName="CIM_IndicationHandlerCIMXML",'
+        enumerate_command +='Name="%s" -i uuid:%s  -R -o -m 256 ' %(uuid,uuid)
+
+        enumerate_command += self.remote_options(remote)
+        enumerate_command += '-N %s -r 100' % (cim_namespace)
+
+     	log.info("Performing Renew for " + enumerate_command)
+
+        
+        # Use the transport and execute the command
+        output = self.get_transport().execute(enumerate_command)
+        
+        if raw:
+            return output
+        else:
+            # Parse the output into a response object
+            return self.parse(output)
+
+    def unsubscribe(self, cim_namespace, uuid, remote=None, raw=False):
+        """
+        
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        @param uuid: The UUID which gets generated after subscription command
+        @type uuid: String
+
+        @return: Response object after enumeration
+        @rtype: List of L{Response} objects/ L{Fault}
+        """
+        
+        # Construct the command
+        enumerate_command='wsman unsubscribe http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_IndicationHandlerCIMXML?'
+        enumerate_command +='SystemCreationClassName="CIM_ComputerSystem",SystemName="localhost.localdomain",CreationClassName="CIM_IndicationHandlerCIMXML",'
+        enumerate_command +='Name="%s" -i uuid:%s  -R -o -m 256 ' %(uuid,uuid)
+
+        enumerate_command += self.remote_options(remote)
+        enumerate_command += '-N %s' % (cim_namespace)
+
+     	log.info("Performing Unsubscribe for " + enumerate_command)
+
+        
+        # Use the transport and execute the command
+        output = self.get_transport().execute(enumerate_command)
+        
+        if raw:
+            return output
+        else:
+            # Parse the output into a response object
+            return self.parse(output)
+
     def enumerate(self, cim_class, cim_namespace, remote=None, raw=False, uri_host=""):
         """
         Enumerate the CIM class.
@@ -456,7 +558,7 @@ class WSManCLI(WSManProvider):
         # Construct the command
         enumerate_command = 'wsman -o -m 512 '
         enumerate_command += self.remote_options(remote)
-        enumerate_command += '-N %s enumerate %s/wbem/wscim/1/cim-schema/2/%s' % (cim_namespace, uri_host, cim_class)
+        enumerate_command += '-N %s enumerate %s/wbem/wscim/1/cim-schema/2/%s' % (uri_host, cim_namespace, cim_class)
         
         # Use the transport and execute the command
         output = self.get_transport().execute(enumerate_command)
@@ -489,7 +591,7 @@ class WSManCLI(WSManProvider):
         # Construct the command
         enumerate_command = 'wsman -M epr -o -m 512 '
         enumerate_command += self.remote_options(remote)
-        enumerate_command += '-N %s enumerate %s/wbem/wscim/1/cim-schema/2/%s' % (cim_namespace, uri_host, cim_class)
+        enumerate_command += '-N %s enumerate %s/wbem/wscim/1/cim-schema/2/%s' % (uri_host, cim_namespace, cim_class)
        
         print "Executing command %s" % enumerate_command
         # Use the transport and execute the command
@@ -780,7 +882,7 @@ class WSManCLI(WSManProvider):
     
         # Get the keys reference for this instance (This needs to be set prior to the get)
         if reference and\
-		      isinstance(reference,Reference):
+            isinstance(reference,Reference):
                 
             # Important: 
             # Form the query from the reference and not from the enumerated instance
@@ -808,7 +910,7 @@ class WSManCLI(WSManProvider):
             print "Executing command %s" % get_command
             # Use the transport and execute the command
             output = self.get_transport().execute(get_command)
-	        
+            
             if raw:
                 return output
             

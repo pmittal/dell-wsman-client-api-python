@@ -84,6 +84,59 @@ class WSMan(object):
         
         return self.__provider.enumerate(cim_class, cim_namespace, remote, raw, uri_host)
     
+    def subscribe(self, cim_class, cim_namespace, EventSinkIP, remote=None, raw=False):
+        """
+        Enumerate the CIM class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        
+        @return: Response object after enumeration
+        @rtype: List
+        """
+        
+        return self.__provider.subscribe(cim_class, cim_namespace, EventSinkIP, remote, raw)
+    
+    @cache.lru_cache(maxsize=20)    
+    def renew(self, cim_namespace, uuid, remote=None, raw=False):
+        """
+        Enumerate the CIM class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        
+        @return: Response object after enumeration
+        @rtype: List
+        """
+        
+        return self.__provider.renew(cim_namespace, uuid, remote, raw)  
+
+    @cache.lru_cache(maxsize=20)    
+    def unsubscribe(self, cim_namespace, uuid, remote=None, raw=False):
+        """
+        Enumerate the CIM class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        
+        @return: Response object after enumeration
+        @rtype: List
+        """
+        
+        return self.__provider.unsubscribe(cim_namespace, uuid, remote, raw)  
+
     @cache.lru_cache(maxsize=20)
     def enumerate_keys(self, cim_class, cim_namespace, remote=None, raw=False, uri_host="http://schemas.dmtf.org"):
         """        

@@ -63,8 +63,7 @@ class WSManProvider(object):
         @rtype: L{Response}
         """
         raise NotImplementedError("This method needs to be implemented in the derived class.")
-    
-    
+        
     def enumerate(self, cim_class, cim_namespace, remote=None, raw=False, uri_host=""):
         """
         Enumerate the cim class.
@@ -76,8 +75,24 @@ class WSManProvider(object):
         @param remote: Remote configuration object
         @type remote: L{Remote}
         @param uri_host: The host portion of the resource URI
-        @type uri_host: L{String}
+        @type uri_host: L{String}        
+    
+        @return: Response object after enumeration
+        @rtype: List of L{Response} objects/ L{Fault}
+        """
         
+        raise NotImplementedError("This method needs to be implemented in the derived class.")
+
+    def subscribe(self, cim_class, cim_namespace, EventSinkIP, remote=None):
+        """
+        Enumerate the cim class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
         
         @return: Response object after enumeration
         @rtype: List of L{Response} objects/ L{Fault}
@@ -85,6 +100,39 @@ class WSManProvider(object):
         
         raise NotImplementedError("This method needs to be implemented in the derived class.")
     
+    def renew(self, cim_namespace, uuid, remote=None):
+        """
+        Enumerate the cim class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        
+        @return: Response object after enumeration
+        @rtype: List of L{Response} objects/ L{Fault}
+        """
+        
+        raise NotImplementedError("This method needs to be implemented in the derived class.")
+
+    def unsubscribe(self, cim_namespace, uuid, remote=None):
+        """
+        Enumerate the cim class.
+        
+        @param cim_class: CIM class to be enumerated
+        @type cim_class: String
+        @param cim_namespace: Namespace of the CIM class
+        @type cim_namespace: String
+        @param remote: Remote configuration object
+        @type remote: L{Remote}
+        
+        @return: Response object after enumeration
+        @rtype: List of L{Response} objects/ L{Fault}
+        """
+        
+        raise NotImplementedError("This method needs to be implemented in the derived class.")
     
     def enumerate_keys(self, cim_class, cim_namespace, remote=None, uri_host=""):
         """        

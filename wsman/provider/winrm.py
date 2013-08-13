@@ -407,7 +407,7 @@ class WinRM(WSManProvider):
             return self.parse(output)
     
         
-    def enumerate(self, cim_class, cim_namespace, remote=None, raw=False, uri_host=""):
+    def enumerate(self, cim_class, cim_namespace, remote=None, raw=False, uri_host="", format='Pretty'):
         """
         Enumerate the CIM class.
         
@@ -422,13 +422,14 @@ class WinRM(WSManProvider):
         
         
         @return: Response objects after enumeration
-        @rtype: List of L{Response} objects/ L{Fault}
+        @rtype: List of L{Response} objects/ L{Fault}than
         """
         
         # Construct the command
         enumerate_command  = 'winrm e \"%s/wbem/wscim/1/cim-schema/2/%s?__cimnamespace=%s\" ' % (uri_host, cim_class, cim_namespace)
         enumerate_command += self.remote_options(remote)        
-        enumerate_command += '-SkipCNcheck -SkipCAcheck -format:Pretty'
+        enumerate_command += '-SkipCNcheck -SkipCAcheck -format:%s' % format
+        print 'Command = ', enumerate_command
         
         # Use the transport and execute the command
         output = self.get_transport().execute(enumerate_command)        
@@ -461,7 +462,9 @@ class WinRM(WSManProvider):
         enumerate_command  = 'winrm e \"%s/wbem/wscim/1/cim-schema/2/%s?__cimnamespace=%s\" ' % (uri_host, cim_class, cim_namespace)
         enumerate_command += self.remote_options(remote)
         enumerate_command += '-SkipCNcheck -SkipCAcheck -format:Pretty -ReturnType:EPR'
-        
+
+        print 'Command = ', enumerate_command
+
         # Use the transport and execute the command
         output = self.get_transport().execute(enumerate_command)
         
@@ -514,9 +517,18 @@ class WinRM(WSManProvider):
             
             # Construct the command
             get_command  = 'winrm s \"%s?%s\" ' % (reference.resource_uri, query)
-            get_command += self.properties_argument(properties) + ' '
             get_command += self.remote_options(remote)
-            get_command += '-SkipCNcheck -SkipCAcheck -format:Pretty'
+            get_command += '-SkipCNcheck -SkipCAcheck -format:Pretty '
+            # construct the options
+            if isinstance(properties, basestring):
+                get_command += "-file:\"%s\"" % properties
+            elif isinstance(properties, dict):
+                get_command += self.properties_argument(properties) + ' '
+            #get_command += self.properties_argument(properties) + ' '
+            
+            print 'Command = ', get_command
+
+
             
             # Use the transport and execute the command
             output = self.get_transport().execute(get_command)
@@ -594,6 +606,8 @@ class WinRM(WSManProvider):
             get_command += '-dialect:association -filter:{object=%s?%s} ' % (classname, query)
             get_command += self.remote_options(remote)
             get_command += '-SkipCNcheck -SkipCAcheck -format:Pretty'
+
+            print 'Command = ', get_command
             
             # Use the transport and execute the command
             output = self.get_transport().execute(get_command)
@@ -654,7 +668,9 @@ class WinRM(WSManProvider):
             get_command += '-dialect:association -associations -filter:{object=%s?%s} ' % (classname, query)
             get_command += self.remote_options(remote)
             get_command += '-SkipCNcheck -SkipCAcheck -format:Pretty'
-            
+
+            print 'Command = ', get_command
+
             # Use the transport and execute the command
             output = self.get_transport().execute(get_command)
             
@@ -715,9 +731,11 @@ class WinRM(WSManProvider):
             get_command  = 'winrm g \"%s?%s\" ' % (reference.resource_uri, query)
             get_command += self.remote_options(remote)
             get_command += '-SkipCNcheck -SkipCAcheck -format:Pretty'
-            
-            
+
+            print 'Command = ', get_command
+
             # Use the transport and execute the command
+
             output = self.get_transport().execute(get_command)
         
             if raw:
@@ -798,6 +816,8 @@ class WinRM(WSManProvider):
                 get_command += "-file:\"%s\"" % arguments
             elif isinstance(arguments, dict):
                 get_command += " " + self.properties_argument(arguments)
+
+            print 'Command = ', get_command
              
             # Use the transport and execute the command
             output = self.get_transport().execute(get_command)
