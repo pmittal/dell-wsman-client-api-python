@@ -407,7 +407,7 @@ class WinRM(WSManProvider):
             return self.parse(output)
 
 
-    def enumerate(self, cim_class, cim_namespace, remote=None, raw=False, uri_host="", format='Pretty'):
+    def enumerate(self, cim_class, cim_namespace, remote=None, raw=False, uri_host=""):
         """
         Enumerate the CIM class.
 
@@ -428,7 +428,7 @@ class WinRM(WSManProvider):
         # Construct the command
         enumerate_command  = 'winrm e \"%s/wbem/wscim/1/cim-schema/2/%s?__cimnamespace=%s\" ' % (uri_host, cim_class, cim_namespace)
         enumerate_command += self.remote_options(remote)
-        enumerate_command += '-SkipCNcheck -SkipCAcheck -format:%s' % format
+        enumerate_command += '-SkipCNcheck -SkipCAcheck -format:Pretty'
 
         # Use the transport and execute the command
         output = self.get_transport().execute(enumerate_command)
